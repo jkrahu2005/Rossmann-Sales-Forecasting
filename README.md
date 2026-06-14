@@ -74,25 +74,28 @@ Key Features:
 
 Sales showed consistent growth over the observed period.
 
-### Correlation Analysis
+## 🔥 Top Business Drivers
 
-| Feature       | Correlation with Sales |
-| ------------- | ---------------------: |
-| Customers     |                  0.895 |
-| Open          |                  0.678 |
-| Promo         |                  0.452 |
-| SchoolHoliday |                  0.085 |
-| Month         |                  0.049 |
-| Quarter       |                  0.044 |
-| Year          |                  0.024 |
-| DayOfWeek     |                 -0.462 |
-| IsWeekend     |                 -0.450 |
+| Feature             | Importance |
+| ------------------- | ---------: |
+| Assortment_b        |     0.2336 |
+| Customers           |     0.2274 |
+| StoreType_d         |     0.1536 |
+| StoreType_b         |     0.1133 |
+| Promo               |     0.0488 |
+| Assortment_c        |     0.0226 |
+| Promo2              |     0.0219 |
+| CompetitionDistance |     0.0204 |
+| Promo2SinceYear     |     0.0142 |
+| Promo2SinceWeek     |     0.0139 |
 
-Key Findings:
+### Business Insights
 
-* Customer count is the strongest sales driver.
-* Promotions positively influence sales.
-* Weekends generally produce lower sales than weekdays.
+* Product assortment is the strongest driver of sales.
+* Customer footfall has a major impact on revenue generation.
+* Store type significantly affects store performance.
+* Promotional campaigns positively influence sales.
+* Competition distance has relatively lower influence compared to assortment and customer traffic.
 
 ---
 
