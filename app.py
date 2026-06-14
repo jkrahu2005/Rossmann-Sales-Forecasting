@@ -42,15 +42,29 @@ h2, h3 {
 """, unsafe_allow_html=True)
 
 # =====================================================
-# LOAD MODEL & DATA
+# CACHED LOADERS (Performance)
 # =====================================================
 
-model = joblib.load("models/xgb_model.pkl")
-features = joblib.load("models/features.pkl")
+@st.cache_resource
+def load_model():
+    model = joblib.load("models/xgb_model.pkl")
+    features = joblib.load("models/features.pkl")
+    return model, features
 
-# Load real dataset
-df = pd.read_csv("data/train.csv")
-df["Date"] = pd.to_datetime(df["Date"])
+@st.cache_data
+def load_data():
+    df = pd.read_csv("data/train.csv", low_memory=False)
+    df["Date"] = pd.to_datetime(df["Date"])
+    df["Month"] = df["Date"].dt.month   # ✅ moved here
+    return df
+
+@st.cache_data
+def load_feature_importance():
+    return pd.read_csv("data/feature_importance.csv")
+
+# Load all assets
+model, features = load_model()
+df = load_data()
 
 # =====================================================
 # HEADER & SIDEBAR
@@ -101,8 +115,7 @@ if page == "Business Dashboard":
 
     # Monthly Sales Trend (from real data)
     st.subheader("📈 Monthly Sales Trend")
-    df["Month"] = df["Date"].dt.month
-    monthly_sales = df.groupby("Month")["Sales"].mean().reset_index()
+    monthly_sales = df.groupby("Month")["Sales"].mean().reset_index()   # Month already exists
     fig_line = px.line(
         monthly_sales,
         x="Month",
@@ -110,7 +123,7 @@ if page == "Business Dashboard":
         markers=True,
         title="Average Sales by Month"
     )
-    st.plotly_chart(fig_line, use_container_width=True)
+    st.plotly_chart(fig_line, width="stretch")
 
     # Promotion Impact (from real data)
     st.subheader("🎯 Promotion Impact")
@@ -123,13 +136,13 @@ if page == "Business Dashboard":
         title="Average Sales: Promo vs No Promo",
         text_auto=True
     )
-    st.plotly_chart(fig_bar, use_container_width=True)
+    st.plotly_chart(fig_bar, width="stretch")
 
     st.markdown("---")
 
-    # Feature Importance (from CSV)
+    # Feature Importance (using cached data)
     st.subheader("🚀 Top Business Drivers")
-    feature_data = pd.read_csv("data/feature_importance.csv").head(10)
+    feature_data = load_feature_importance().head(10)
     fig_importance = px.bar(
         feature_data,
         x="Importance",
@@ -138,7 +151,7 @@ if page == "Business Dashboard":
         title="Top 10 Business Drivers",
         text_auto=".3f"
     )
-    st.plotly_chart(fig_importance, use_container_width=True)
+    st.plotly_chart(fig_importance, width="stretch")
 
     st.markdown("---")
 
@@ -195,7 +208,7 @@ elif page == "Sales Prediction":
 
     st.markdown("")
 
-    if st.button("Predict Sales", use_container_width=True):
+    if st.button("Predict Sales", width="stretch"):
         input_data = dict.fromkeys(features, 0)
 
         # Date features
